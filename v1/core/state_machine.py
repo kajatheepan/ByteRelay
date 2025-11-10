@@ -1,6 +1,10 @@
+import logging
+
 from core.enums import TransferState as S
 from core.models import TransferHistory
 from core.db import utc_now_iso
+
+logger = logging.getLogger(__name__)
 
 
 # Map of current state -> set of states it's legally allowed to move to.
@@ -45,5 +49,9 @@ def transition(session, transfer, new_state: S, note: str | None = None):
 
     session.commit()
 
-    # TODO: log this transition once core/logging_setup.py exists (Task 1.9)
-    # logger.info("state_transition", extra={...})
+    logger.info("state_transition", extra={
+        "transfer_id": transfer.id,
+        "from_state": old_state,
+        "to_state": new_state.value,
+        "note": note,
+    })
