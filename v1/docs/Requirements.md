@@ -1,8 +1,8 @@
-# Requirements — ByteRelay (v1)
+# Requirements — Telegram2NextCloud (v1)
 
 ## Functional Requirements
 
-1. User forwards/sends a file to the Telegram bot (files up to 2GB+, via Telethon/MTProto — Bot API's ~20MB cap is insufficient).
+1. User forwards/sends a file to the Telegram bot (files up to 2GB, via Telethon/MTProto — Bot API's ~20MB cap is insufficient). Files exceeding the configured limit are rejected immediately with a clear message, before any setup/confirm flow starts.
 2. **If the user has no saved Nextcloud credentials yet, the bot triggers a setup flow automatically on this first file forward** — asking for server URL, username, and password, before proceeding. Credentials are saved (encrypted) so this only happens once per user.
 3. Once credentials exist (just saved, or already on file), the bot responds with file info (name, size) and a Confirm/Cancel button.
 4. If user cancels or ignores → nothing is stored, no transfer record created.
@@ -39,6 +39,8 @@ Grouped by category. Each item says what v1 actually commits to — not just the
 - Bot's own config (bot token, API ID/hash) stored outside code, in a `.env` file, never hardcoded or committed to git.
 - **User-supplied Nextcloud credentials (server URL, username, password) are encrypted at rest** in the database — never stored in plain text. Encryption key lives outside the database (`.env`), never alongside the encrypted data.
 - **Known accepted risk (v1):** users provide their real Nextcloud username/password (not a revocable app password), since not all users can generate app passwords on their Nextcloud instance. This is a conscious trade-off, not an oversight — the bot should tell users plainly what it stores. App-password support is a designed-for-later security upgrade.
+- **Mitigation for password-in-chat exposure:** the password message the user sends during setup is deleted from the chat immediately after being read, reducing (not eliminating) its footprint in visible chat history.
+- Database sessions are always released after use (via a context-manager helper), never left open — avoids a slow connection leak on a long-running process.
 - One user must never be able to access or trigger actions on another user's transfer or credentials (isolation is mandatory, not deferred).
 - No secrets or credentials ever appear in logs.
 - **Known accepted risk (v1):** the bot is open — any Telegram user who finds it can use it (no allow-list/access control). Each user now supplies their own Nextcloud destination, which somewhat reduces the earlier "shared account" risk, but an open bot is still worth flagging as a deliberate v1 scope decision.
