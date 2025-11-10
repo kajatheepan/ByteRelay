@@ -1,0 +1,8 @@
+telethon
+pydantic-settings
+sqlalchemy
+alembic
+httpx
+cryptography
+pytest
+pytest-asyncio
