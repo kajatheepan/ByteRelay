@@ -1,3 +1,5 @@
+# All app config lives here. Every other file must import `settings` from
+# this module instead of reading os.environ or .env directly.
 from pydantic_settings import BaseSettings
 
 
@@ -13,7 +15,7 @@ class Settings(BaseSettings):
     concurrent_worker_limit: int = 3
     max_file_size_bytes: int = 4_294_967_296  # 2GB
 
-    encryption_key: str
+    encryption_key: str  # Fernet key used to encrypt saved Nextcloud passwords
 
     log_level: str = "INFO"
     app_env: str = "development"
@@ -22,4 +24,6 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
+# Created once at import time. If a required field is missing from .env,
+# this line crashes immediately instead of failing later mid-transfer.
 settings = Settings()
