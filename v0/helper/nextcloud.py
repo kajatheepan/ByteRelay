@@ -1,13 +1,13 @@
 import asyncio
 import aiohttp
 import xml.etree.ElementTree as ET
-from helper.progress import FileWithProgress
+from v0.helper.progress import FileWithProgress
 import certifi
 import ssl
 from aiohttp import AsyncIterablePayload
-from helper.logger import logger
+from v0.helper.logger import logger
 from urllib.parse import quote
-from config import Configs
+from v0.config import Configs
 
 class nextcloud:
     upload_point = Configs.UPLOAD_POINT

@@ -1,8 +1,8 @@
 import os
 import time
 import asyncio
-from translation import Translation
-from helper.humanbytes import humanbytes
+from v0.translation import Translation
+from v0.helper.humanbytes import humanbytes
 
 
 CHUNK_SIZE = 1024*1024 # 1 MB

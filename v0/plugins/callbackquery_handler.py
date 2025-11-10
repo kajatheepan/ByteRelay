@@ -1,9 +1,10 @@
 from pyrogram import Client as bot
 from pyrogram import filters, enums
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-from translation import Translation,InlineKeyboard
-from helper.logger import logging as logger
-from helper import utils, nextcloud
+from v0.translation import Translation,InlineKeyboard
+from v0.helper.logger import logging as logger
+from v0.helper import utils
+from v0.helper import nextcloud
 
 @bot.on_callback_query()
 async def handle_callback_query(client: bot, callback_query: CallbackQuery):

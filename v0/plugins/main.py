@@ -1,12 +1,12 @@
 from pyrogram import Client as bot
 from pyrogram.types import Message  
 from pyrogram import filters, enums
-from translation import Translation,InlineKeyboard
+from v0.translation import Translation,InlineKeyboard
 import re
 from xml.etree import ElementTree
-from helper.nextcloud import nextcloud 
-from helper.logger import logger
-from helper.utils import get_bot_username
+from v0.helper.nextcloud import nextcloud 
+from v0.helper.logger import logger
+from v0.helper.utils import get_bot_username
 
 @bot.on_message(filters.command(['start']))
 async def start_command(client: bot, message: Message):

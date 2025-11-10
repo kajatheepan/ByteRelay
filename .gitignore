@@ -12,6 +12,7 @@ dist/
 .vscode/
 .idea/
 
+# Virtual environments
 venv/
 .venv/
 
@@ -25,21 +26,19 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Your bot downloads/uploads cache (example)
+# Bot downloads/uploads cache
 downloads/
 uploads/
 
-# Sessions
-*.Sessions
+# Telegram sessions
 *.session
 *.session-journal
+
+# Database (v1 state machine storage)
+*.db
+*.sqlite3
 
 # Temporary files
 *.tmp
 
-/sample.py
-/test.py
-
 .prettierc
-
-

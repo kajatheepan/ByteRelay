@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from config import Configs as Config
-from helper.logger import logging
+from v0.config import Configs as Config
+from v0.helper.logger import logging
 
 api_id = Config.API_ID
 api_hash = Config.API_HASH  

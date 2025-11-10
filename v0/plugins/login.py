@@ -1,12 +1,12 @@
 from pyrogram import Client as bot
 from pyrogram.types import Message  
 from pyrogram import filters,enums
-from translation import Translation
+from v0.translation import Translation
 from xml.etree import ElementTree
-from helper.humanbytes import humanbytes
-from helper.checkquota import check_quota
-from helper.nextcloud import nextcloud
-from helper.logger import logger
+from v0.helper.humanbytes import humanbytes
+from v0.helper.checkquota import check_quota
+from v0.helper.nextcloud import nextcloud
+from v0.helper.logger import logger
 
 @bot.on_message(filters.command(['login']))
 async def login_command(client: bot, message: Message):

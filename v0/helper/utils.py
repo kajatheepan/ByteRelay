@@ -1,6 +1,6 @@
-from helper.logger import logger
-from translation import Translation
-from config import Configs
+from v0.helper.logger import logger
+from v0.translation import Translation
+from v0.config import Configs
 import time 
 
 def get_file_name(message):
