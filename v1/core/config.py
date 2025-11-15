@@ -25,6 +25,5 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
-# Created once at import time. If a required field is missing from .env,
-# this line crashes immediately instead of failing later mid-transfer.
+# Created once at import time; raises if a required field is missing from .env.
 settings = Settings()

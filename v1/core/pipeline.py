@@ -9,8 +9,7 @@ from core.state_machine import transition
 
 
 # Moves one transfer from Source to Destination, chunk by chunk, updating
-# state and chunk records as it goes. Exceptions from the destination are
-# not caught here — core/retry.py wraps this and decides retry vs fail.
+# state and chunk records as it goes.
 async def run_transfer(session, transfer, source: Source, destination: Destination,
                         on_progress=None):
     transition(session, transfer, TransferState.DOWNLOADING)
