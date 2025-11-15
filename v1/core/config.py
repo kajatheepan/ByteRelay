@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     max_retry_attempts: int = 3
     concurrent_worker_limit: int = 3
     max_file_size_bytes: int = 4_294_967_296  # 2GB
+    min_progress_interval_seconds: float = 3.0  # throttles progress updates, avoids Telegram rate limits
 
     encryption_key: str  # Fernet key used to encrypt saved Nextcloud passwords
 

@@ -3,7 +3,7 @@ import uuid
 from adapters.base import Source, Destination
 
 
-# In-memory Source for tests — no real Telegram calls.
+# In-memory Source used for tests — no real Telegram call involved.
 class FakeSource(Source):
     def __init__(self, data: bytes, filename="test.bin"):
         self._data = data
@@ -18,8 +18,8 @@ class FakeSource(Source):
             yield self._data[i:i + chunk_size]
 
 
-# In-memory Destination for tests — no real Nextcloud calls.
-# fail_on_chunk lets a test simulate a network drop at a specific chunk.
+# In-memory Destination used for tests. fail_on_chunk lets a test simulate
+# a network drop on a specific chunk number.
 class FakeDestination(Destination):
     def __init__(self, fail_on_chunk: int | None = None):
         self.chunks = {}
