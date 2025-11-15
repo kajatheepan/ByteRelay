@@ -1,6 +1,6 @@
 # All app config lives here. Every other file must import `settings` from
 # this module instead of reading os.environ or .env directly.
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -21,8 +21,7 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     app_env: str = "development"
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env")
 
 
 # Created once at import time; raises if a required field is missing from .env.
