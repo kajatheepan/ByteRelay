@@ -1,6 +1,6 @@
 import asyncio
 
-from bot import client
+from telegram_client import client
 from core.config import settings
 from core.db import get_session
 from core.models import Transfer

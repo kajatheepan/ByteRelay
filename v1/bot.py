@@ -1,14 +1,10 @@
-import asyncio 
-
-from telethon import TelegramClient
+import asyncio
 
 from core.config import settings
 from core.logging_setup import setup_logging
+from telegram_client import client
 
-
-client = TelegramClient("bot_session", settings.telegram_api_id, settings.telegram_api_hash)
-
-import bot_logic  # noqa: E402 — registers event handlers on client, must import after client exists
+import bot_logic  # noqa: E402 — registers event handlers on client
 
 
 async def main():

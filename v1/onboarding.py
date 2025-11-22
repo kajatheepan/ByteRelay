@@ -3,7 +3,7 @@ import uuid
 
 from telethon import Button
 
-from bot import client
+from telegram_client import client
 from core.credentials import encrypt_password
 from core.db import get_session, utc_now_iso
 from core.models import NextcloudCredential

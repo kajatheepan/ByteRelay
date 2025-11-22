@@ -2,7 +2,7 @@ import asyncio
 
 from telethon import events
 
-from bot import client
+from telegram_client import client
 from core.config import settings
 from core.db import get_session, utc_now_iso
 from core.enums import TransferState
