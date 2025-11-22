@@ -7,7 +7,17 @@ from core.config import settings
 from core.db import get_session, utc_now_iso
 from core.enums import TransferState
 from core.models import Transfer
+from dispatcher import dispatch_transfer
 from onboarding import PENDING_CONFIRMATIONS, handle_incoming_file
+
+
+@client.on(events.NewMessage(pattern="/start"))
+async def on_start(event):
+    """Replies with a short intro, mainly used to confirm the bot is running."""
+    await event.respond(
+        "👋 Send me a file and I'll upload it to your Nextcloud.\n"
+        "First time? I'll ask for your Nextcloud server URL, username, and password."
+    )
 
 
 @client.on(events.NewMessage(func=lambda e: e.file is not None))
