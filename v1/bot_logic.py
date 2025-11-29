@@ -59,6 +59,7 @@ async def on_callback(event):
         transfer = Transfer(
             user_id=pending["user_id"], telegram_file_id=pending["telegram_file_id"],
             telegram_chat_id=pending["chat_id"], telegram_message_id=pending["confirm_message_id"],
+            source_message_id=pending["source_message_id"],
             original_filename=pending["filename"], file_size_bytes=pending["size"],
             state=TransferState.QUEUED.value,
             created_at=utc_now_iso(), updated_at=utc_now_iso(),

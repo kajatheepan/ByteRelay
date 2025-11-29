@@ -39,7 +39,7 @@ async def handle_incoming_file(user_id, chat_id, message_id, file_id, filename, 
         await run_setup(event, user_id)
         return
 
-    await send_confirm_button(event, filename, size)
+    await send_confirm_button(event, filename, size, message_id)
 
 
 async def run_setup(event, user_id):
@@ -83,10 +83,10 @@ async def run_setup(event, user_id):
 
     pending = PENDING_FILES.pop(user_id, None)
     if pending:
-        await send_confirm_button(pending["event"], pending["filename"], pending["size"])
+        await send_confirm_button(pending["event"], pending["filename"], pending["size"], pending["message_id"])
 
 
-async def send_confirm_button(event, filename, size):
+async def send_confirm_button(event, filename, size, source_message_id):
     """Show the file's Confirm/Cancel buttons and register it in PENDING_CONFIRMATIONS."""
     interaction_key = f"{event.sender_id}:{uuid.uuid4().hex}"
     msg = await event.respond(
@@ -98,6 +98,7 @@ async def send_confirm_button(event, filename, size):
         "user_id": event.sender_id,
         "chat_id": event.chat_id,
         "telegram_file_id": event.file.id,
+        "source_message_id": source_message_id,
         "filename": filename,
         "size": size,
         "confirm_message_id": msg.id,

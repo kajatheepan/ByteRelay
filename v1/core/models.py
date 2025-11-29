@@ -17,6 +17,7 @@ class Transfer(Base):
     telegram_file_id = Column(Text, nullable=False)
     telegram_chat_id = Column(Integer, nullable=False)
     telegram_message_id = Column(Integer)  # progress message we edit as % updates come in
+    source_message_id = Column(Integer)  # message containing the file itself, used to fetch it for download
     original_filename = Column(Text, nullable=False)
     final_filename = Column(Text)  # may differ from original if auto-renamed on conflict
     file_size_bytes = Column(Integer, nullable=False)

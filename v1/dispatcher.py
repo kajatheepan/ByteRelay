@@ -20,7 +20,7 @@ async def dispatch_transfer(transfer_id: int):
             from adapters.telegram_source import TelegramSource
             from adapters.nextcloud_destination import NextcloudDestination
 
-            message = await client.get_messages(transfer.telegram_chat_id, ids=transfer.telegram_message_id)
+            message = await client.get_messages(transfer.telegram_chat_id, ids=transfer.source_message_id)
             source_factory = lambda: TelegramSource(client, message, settings.chunk_size_bytes)
             destination_factory = lambda: NextcloudDestination(credential, transfer.original_filename)
 
