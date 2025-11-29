@@ -1,3 +1,4 @@
+import logging
 import math
 import random
 from datetime import datetime, timezone
@@ -8,6 +9,8 @@ from core.config import settings
 from adapters.base import Destination
 from core.credentials import decrypt_password
 from core.retry import AuthenticationError, InsufficientStorageError, NonRetryableError
+
+logger = logging.getLogger(__name__)
 
 
 # Real Destination implementation: uploads a file to Nextcloud using the
@@ -30,6 +33,9 @@ class NextcloudDestination(Destination):
         self._final_name = await self._resolve_filename(self._original_filename)
         self._transfer_id = str(random.randint(10**9, 10**10 - 1))  # must be numeric — server 502s on hex/uuid ids
         self._total_chunks = max(1, math.ceil(total_size / settings.chunk_size_bytes))
+        logger.info("nextcloud_upload_start", extra={
+            "note": f"{self._final_name} ({self._total_chunks} chunks, transfer_id={self._transfer_id})",
+        })
         return self._transfer_id
 
     async def _resolve_filename(self, name):
@@ -53,7 +59,11 @@ class NextcloudDestination(Destination):
         try:
             resp = await self._client.put(url, content=bytes(chunk_bytes), headers={"OC-Chunked": "1"})
         except httpx.TimeoutException as e:
+            logger.warning("nextcloud_chunk_timeout", extra={"note": f"chunk {chunk_number}/{self._total_chunks}"})
             raise ConnectionError(f"Nextcloud request timed out: {e}")  # let retry.py retry instead of hard-failing
+        logger.info("nextcloud_chunk_uploaded", extra={
+            "note": f"chunk {chunk_number}/{self._total_chunks}, status={resp.status_code}",
+        })
         self._raise_for_status(resp)
 
     async def finish(self):
@@ -61,12 +71,15 @@ class NextcloudDestination(Destination):
         check_url = f"{self._base}/remote.php/webdav/{self._final_name}"
         resp = await self._client.request("PROPFIND", check_url, headers={"Depth": "0"})
         if resp.status_code == 404:
+            logger.error("nextcloud_upload_incomplete", extra={"note": self._final_name})
             raise NonRetryableError("Upload did not complete: assembled file not found")
+        logger.info("nextcloud_upload_finished", extra={"note": self._final_name})
         await self._client.aclose()
         return self._final_name
 
     async def abort(self):
         """No server-side cleanup needed: incomplete chunk sets are never assembled."""
+        logger.warning("nextcloud_upload_aborted", extra={"note": self._final_name})
         await self._client.aclose()
 
     def _raise_for_status(self, resp):

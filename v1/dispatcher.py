@@ -24,6 +24,9 @@ async def dispatch_transfer(transfer_id: int):
             with get_session() as session:
                 transfer = session.get(Transfer, transfer_id)
                 credential = get_credential(session, transfer.user_id)
+                logger.info("dispatch_transfer_start", extra={
+                    "transfer_id": transfer_id, "note": transfer.original_filename,
+                })
 
                 from adapters.telegram_source import TelegramSource
                 from adapters.nextcloud_destination import NextcloudDestination
@@ -33,6 +36,9 @@ async def dispatch_transfer(transfer_id: int):
                 destination_factory = lambda: NextcloudDestination(credential, transfer.original_filename)
 
                 async def on_progress(percent):
+                    logger.info("dispatch_transfer_progress", extra={
+                        "transfer_id": transfer_id, "note": f"{percent}%",
+                    })
                     try:
                         await client.edit_message(transfer.telegram_chat_id, transfer.telegram_message_id,
                                                    f"Uploading... {percent}%")
@@ -40,5 +46,6 @@ async def dispatch_transfer(transfer_id: int):
                         pass  # Telegram errors if the edit text equals the current text — harmless here
 
                 await run_with_retry(session, transfer, source_factory, destination_factory, on_progress=on_progress)
+                logger.info("dispatch_transfer_done", extra={"transfer_id": transfer_id, "note": transfer.state})
     except Exception as e:
         logger.error("dispatch_transfer_failed", extra={"transfer_id": transfer_id, "error": str(e)})
