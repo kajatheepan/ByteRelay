@@ -36,7 +36,12 @@ uploads/
 
 # Database (v1 state machine storage)
 *.db
+*.db-wal
+*.db-shm
 *.sqlite3
+
+# Test cache
+.pytest_cache/
 
 # Temporary files
 *.tmp
