@@ -8,7 +8,7 @@
 4. If user cancels or ignores → nothing is stored, no transfer record created.
 5. If user confirms → a Transfer record is created and the upload process starts.
 6. File is downloaded from Telegram in chunks (not fully loaded into memory).
-7. File is uploaded to Nextcloud using the chunked upload API (MKCOL → PUT chunks → MOVE), using that user's own server URL and credentials, into the root folder. Custom folder selection is a future feature, not v1.
+7. File is uploaded to Nextcloud using the legacy WebDAV chunking convention (`OC-Chunked` header, filename suffix `-chunking-{transferid}-{totalchunks}-{chunkindex}`), using that user's own server URL and credentials, into the root folder. Custom folder selection is a future feature, not v1. See the Nextcloud compatibility note below.
 8. If a filename already exists at the destination, it is auto-renamed by appending a timestamp (e.g. `report_20260829_1432.pdf`) — never overwritten, never rejected.
 9. Bot reports upload progress at fixed percentage milestones (10/25/50/75/100%), not on every chunk — avoids Telegram message-edit rate limits.
 10. On a retryable failure (network timeout, connection drop, Nextcloud 5xx), the system retries automatically up to a limited number of attempts (e.g. 3), each retry using a fresh upload session (new unique-id). User sees "Retrying... (attempt 2/3)".
@@ -67,3 +67,11 @@ Grouped by category. Each item says what v1 actually commits to — not just the
 - Hash-based integrity check (size check only, or skipped if time-constrained)
 - Any source/destination other than Telegram → Nextcloud
 - Web UI or any interface other than the Telegram bot
+
+## Known v1 limitation: Nextcloud server compatibility
+
+`NextcloudDestination` was originally built against the newer `dav/uploads/{user}/{session}` chunked-session API (MKCOL → PUT chunks → MOVE), which is the modern Nextcloud standard. Testing against a real server (`dms.uom.lk`, an older Nextcloud/ownCloud instance) found that endpoint unusable there (`409 Conflict — Parent node does not exist`), so v1 switched to the legacy WebDAV chunking convention (`OC-Chunked` header) instead, which that server supports.
+
+**Consequence:** v1's `NextcloudDestination` is only verified against legacy-WebDAV-compatible servers. A modern Nextcloud instance that only supports the newer chunked-session API (or handles the legacy convention differently) is not guaranteed to work as-is.
+
+**Designed for v2:** detect which upload strategy a given server actually supports at the start of a transfer — attempt the modern `dav/uploads` MKCOL first; on failure (e.g. 404/409), fall back to legacy WebDAV chunking. This makes `NextcloudDestination` work correctly across both old and modern Nextcloud servers instead of assuming one convention.
