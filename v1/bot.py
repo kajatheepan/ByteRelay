@@ -2,6 +2,7 @@ import asyncio
 
 from core.config import settings
 from core.logging_setup import setup_logging
+from recovery import recover_stuck_transfers
 from telegram_client import client
 
 import bot_logic  # noqa: E402 — registers event handlers on client
@@ -10,6 +11,7 @@ import bot_logic  # noqa: E402 — registers event handlers on client
 async def main():
     setup_logging()
     await client.start(bot_token=settings.telegram_bot_token)
+    await recover_stuck_transfers()
     await client.run_until_disconnected()
 
 
